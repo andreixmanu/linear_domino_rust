@@ -1,11 +1,10 @@
 use rand::Rng;
-use std::io;
 use std::process::exit;
-use crate::{EMPTY_PIECE, Piece, print};
+use crate::{EMPTY_PIECE, Piece};
 use crate::autocomplete::autocomplete;
 
 use crate::Box;
-use crate::print::{print_player_debug, print_table, print_table_debug, read_string, read_int};
+use crate::print::{print_player_debug, print_table_debug, read_string, read_int};
 
 const LEFT_SIDE: usize = 1;
 const RIGHT_SIDE: usize = 2;
@@ -51,6 +50,25 @@ fn last_valid_index(table: &Vec<Vec<Piece>>) -> usize {
     0
 }
 
+fn calculate_score(table: &Vec<Vec<Piece>>) -> usize{
+    let mut score : i32 = 0;
+    for i in 0..15{
+        for j in 0..15{
+            if table[i][j].right_box.value != -1 && table[i][j].left_box.value != -1 {
+                score += table[i][j].right_box.value;
+                score += table[i][j].left_box.value;
+            }
+        }
+    }
+    return score as usize;
+}
+
+fn switch_pieces(player: &mut Vec<Piece>, n : usize){
+    let temp = player[n].right_box.value;
+    player[n].right_box.value = player[n].left_box.value;
+    player[n].left_box.value = temp;
+}
+
 fn check_move(used_piece: Piece, table_piece: Piece, side: usize) -> bool{
 
     if side == LEFT_SIDE{
@@ -67,16 +85,16 @@ fn check_move(used_piece: Piece, table_piece: Piece, side: usize) -> bool{
 
 fn use_piece(mut table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>, choice: usize, side: usize) -> bool {
 
-    let selected_piece: Piece = player[choice];
+    let selected_piece: Piece = player[choice].clone();
 
     if side == LEFT_SIDE {
 
         let first_index : usize = first_valid_index(&table);
 
         if check_move(selected_piece, table[0][first_index], LEFT_SIDE){
-            table[0][(first_index-1)] = selected_piece;
+            table[0][first_index-1] = selected_piece;
             player.remove(choice);
-            println!("DEBUG: Removed piece {}|{} at index {}", player[choice].left_box.value, player[choice].right_box.value, choice-1);
+            // println!("DEBUG: Removed piece {}|{} at index {}", player[choice].left_box.value, player[choice].right_box.value, choice-1);
             return true;
         }
 
@@ -84,9 +102,9 @@ fn use_piece(mut table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>, choic
 
         let last_index : usize = last_valid_index(&table);
         if check_move(selected_piece, table[0][last_index], RIGHT_SIDE){
-            table[0][(last_index+1)] = selected_piece;
+            table[0][last_index+1] = selected_piece;
             player.remove(choice);
-            println!("DEBUG: Removed piece {}|{} at index {}", player[choice].left_box.value, player[choice].right_box.value, choice-1);
+            // println!("DEBUG: Removed piece {}|{} at index {}", player[choice].left_box.value, player[choice].right_box.value, choice-1);
             return true;
         }
     }
@@ -114,6 +132,8 @@ fn singleplayer(table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>) {
         Press 0 to quit the game");
 
         if choice == 0 {
+            let score = calculate_score(&table);
+            println!("Game finished: final score {}", score);
             exit(0);
         } else if choice > pieces {
             println!("Please select a valid option!");

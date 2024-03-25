@@ -1,4 +1,4 @@
-use crate::{EMPTY_PIECE, Piece};
+use crate::{Piece};
 use std::io;
 
 pub fn print_table_debug(table: &Vec<Vec<Piece>>){
@@ -14,7 +14,7 @@ pub fn print_table_debug(table: &Vec<Vec<Piece>>){
 pub fn print_table(table: &Vec<Vec<Piece>>){
     for i in 0..3 {
         for j in 0..15 {
-            if(table[i][j].left_box.value != -1 && table[i][j].right_box.value != -1){
+            if table[i][j].left_box.value != -1 && table[i][j].right_box.value != -1 {
                 print!("[{}|{}] ", table[i][j].left_box.value, table[i][j].right_box.value);
             }
         }

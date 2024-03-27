@@ -47,7 +47,7 @@ fn main() {
 
     loop{
         match choice {
-            1 => {
+            1 => unsafe {
                 game::main_game(table, player);
                 break;
             },

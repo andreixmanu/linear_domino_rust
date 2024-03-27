@@ -1,8 +1,11 @@
+use crate::game::MAX_ROWS;
 use crate::{Piece};
 use std::io;
+use std::io::Read;
 
-pub fn print_table_debug(table: &Vec<Vec<Piece>>){
-    for i in 0..1 {
+
+pub unsafe fn print_table_debug(table: &Vec<Vec<Piece>>){
+    for i in 0..MAX_ROWS {
         for j in 0..15 {
             print!("[{}|{}] ", table[i][j].left_box.value, table[i][j].right_box.value);
         }
@@ -10,12 +13,17 @@ pub fn print_table_debug(table: &Vec<Vec<Piece>>){
     }
 }
 
-//not working
-pub fn print_table(table: &Vec<Vec<Piece>>){
-    for i in 0..3 {
+pub unsafe fn print_table(table: &Vec<Vec<Piece>>){
+    for i in 0..MAX_ROWS {
         for j in 0..15 {
             if table[i][j].left_box.value != -1 && table[i][j].right_box.value != -1 {
                 print!("[{}|{}] ", table[i][j].left_box.value, table[i][j].right_box.value);
+            } else if table[i][j].left_box.value != -1 && table[i][j].right_box.value == -1{
+                print!("[ {} ] ", table[i][j].left_box.value);
+            } else if table[i][j].left_box.value == -1 && table[i][j].right_box.value != -1{
+                print!("[ {} ] ", table[i][j].right_box.value);
+            } else {
+                print!("      ");
             }
         }
         println!();
@@ -55,6 +63,28 @@ pub fn read_string(prompt: &str) -> String {
     }
 }
 
+pub fn read_char(prompt: &str) -> char {
+    println!("{}", prompt);
+
+    let mut input = String::new();
+
+    loop {
+        match io::stdin().read_line(&mut input){
+            Ok(_) => {
+                if let Some(ch) = input.chars().next(){
+                    return ch;
+                } else {
+                    println!("Error");
+                    continue;
+                }
+            }
+            Err(error) =>{
+                println!("Some error occurred, please repeat");
+                continue;
+            }
+        }
+    }
+}
 pub fn read_int(prompt: &str) -> usize {
     loop {
         println!("{}", prompt);

@@ -1,10 +1,9 @@
 use rand::Rng;
 use std::process::exit;
 use crate::{EMPTY_PIECE, Piece};
-use crate::autocomplete::autocomplete;
 
 use crate::Box;
-use crate::print::{print_player_debug, print_table, print_table_debug, read_string, read_int, read_char};
+use crate::print::{print_player_debug, print_table, read_string, read_int, read_char};
 
 pub static mut MAX_ROWS: usize = 1;
 
@@ -110,7 +109,7 @@ fn check_move(used_piece: Piece, table_piece: Piece, side: usize) -> bool {
     false
 }
 
-unsafe fn use_piece(mut table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>, choice: usize, side: usize, row: usize, orientation: usize) -> bool {
+unsafe fn use_piece(table: &mut Vec<Vec<Piece>>, player: &mut Vec<Piece>, choice: usize, side: usize, row: usize, orientation: usize) -> bool {
     let selected_piece: Piece = player[choice].clone();
 
     if orientation == HORIZONTAL {
@@ -132,7 +131,7 @@ unsafe fn use_piece(mut table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>
                 return true;
             }
         }
-    } else {
+    } else if orientation == VERTICAL{
         if row == MAX_ROWS - 1 {
             MAX_ROWS += 1;
         }
@@ -190,7 +189,7 @@ unsafe fn singleplayer(table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>)
             println!("Table:");
             print_table(&table);
             continue;
-        } else if choice_int > pieces || choice_int < 0 || choice_int > player.len() {
+        } else if choice_int > pieces || choice_int > player.len() {
             println!("Please select a valid option!");
             continue;
         }
@@ -201,12 +200,6 @@ unsafe fn singleplayer(table: &mut Vec<Vec<Piece>>, mut player: &mut Vec<Piece>)
             row = read_int("");
         }
 
-        /*if row >= MAX_ROWS {
-            row = MAX_ROWS - 1;
-        } else if row < 1 {
-            row = 1;
-        }
-        */
         let side = read_int("Press 1 to place it on left, and 2 to place it on right:");
         let orientation = read_int("Do you want to place it horizontally (1) or vertically(2)?");
 
@@ -238,17 +231,7 @@ pub unsafe fn main_game(mut table: Vec<Vec<Piece>>, mut player: Vec<Piece>) {
         assign_pieces(&mut player, n_pieces)
     }
 
-    loop {
-        //let choice = read_int("Play it yourself or make computer play?");
-        let choice = 1;
-        if choice == 1 {
-            singleplayer(&mut table, &mut player);
-            break;
-        } else if choice == RIGHT_SIDE {
-            autocomplete(table, &mut player);
-            break;
-        } else {
-            println!("Please select a valid option!");
-        }
-    }
+    println!("Game is starting.");
+    singleplayer(&mut table, &mut player);
+
 }

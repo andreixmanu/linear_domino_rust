@@ -1,14 +1,13 @@
 mod print;
 mod game;
-mod autocomplete;
 
 #[derive(PartialEq, Clone, Copy)]
-struct Box {
+pub struct Box {
     value: i32,
 }
 
 #[derive(PartialEq, Clone, Copy)]
-struct Piece {
+pub struct Piece {
     left_box: Box,
     right_box: Box,
 }
@@ -22,7 +21,7 @@ const EMPTY_PIECE: Piece = Piece {
 fn main() {
 
     let mut table: Vec<Vec<Piece>> = Vec::with_capacity(15);
-    let mut player: Vec<Piece> = vec![];
+    let player: Vec<Piece> = vec![];
 
     // Inizializzazione della matrice con valori di esempio
     for _ in 0..15 {

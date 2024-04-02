@@ -1,9 +1,8 @@
 use crate::game::MAX_ROWS;
-use crate::{Piece};
+use crate::Piece;
 use std::io;
-use std::io::Read;
 
-
+#[allow(dead_code)]
 pub unsafe fn print_table_debug(table: &Vec<Vec<Piece>>){
     for i in 0..MAX_ROWS {
         for j in 0..15 {
@@ -78,7 +77,7 @@ pub fn read_char(prompt: &str) -> char {
                     continue;
                 }
             }
-            Err(error) =>{
+            Err(_error) =>{
                 println!("Some error occurred, please repeat");
                 continue;
             }
